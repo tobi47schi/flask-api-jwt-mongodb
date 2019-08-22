@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c901109f-611a-4eae-b3bc-778f60074129" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/usercontroller.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/controllers/usercontroller.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +38,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server/controllers" />
       <recent name="$PROJECT_DIR$/server/helpers" />
       <recent name="$PROJECT_DIR$/server" />
     </key>
