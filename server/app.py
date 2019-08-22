@@ -4,21 +4,12 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from flask_bcrypt import Bcrypt
-from bson.json_util import dumps, loads
-from pymongo import MongoClient
 
-
-client = MongoClient('mongodb://localhost:27017/')
-with client:
-    db = client.testdb
-
-#db.users.drop()
-db.users.create_index("email", unique=True)
-
-
+#eigene
+from usercontroller import signupC, loginC, protectedC, getUsersC
 
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
+bcrypter = Bcrypt(app)
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 jwt = JWTManager(app)
@@ -29,42 +20,17 @@ jwt = JWTManager(app)
 # it to the caller however you choose.
 @app.route('/login', methods=['POST'])
 def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-    if not email:
-        return jsonify({"msg": "Missing email parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
-    
-    found = db.users.find_one({"email" : email})
-    if not found : 
-        return jsonify({"msg": "User not found"}), 400
-
-    if email != found['email'] or not bcrypt.check_password_hash(found['password'], password):
-        return jsonify({"msg": "Bad email or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200
+    return loginC(bcrypter)
 
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    user = request.json
-    pw_hash = bcrypt.generate_password_hash(user['password']) ## from flask_bcrypt import Bcrypt
-    user['password'] = pw_hash.decode("utf-8")
-    _id = db.users.insert(user)
-    _id = str(_id)
-    return jsonify({"_id" : _id})
+    return signupC(bcrypter)
 
 
 @app.route('/users', methods=['GET'])
 def getUsers():
-    mongoColl = db.users.find()
-    return Response(dumps(mongoColl) , mimetype = "application/json")
+    return getUsersC()
 
 
 # Protect a view with jwt_required, which requires a valid access token
@@ -72,9 +38,8 @@ def getUsers():
 @app.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
-    # Access the identity of the current user with get_jwt_identity
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    return protectedC()
+
 
 if __name__ == '__main__':
     app.run()
