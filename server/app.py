@@ -6,9 +6,10 @@ from flask_jwt_extended import (
 from flask_bcrypt import Bcrypt
 
 #eigene
-from usercontroller import signupC, loginC, protectedC, getUsersC
+from control.usercontroller import signupC, loginC, protectedC, getUsersC
 
 app = Flask(__name__)
+app.debug=True
 bcrypter = Bcrypt(app)
 # Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
