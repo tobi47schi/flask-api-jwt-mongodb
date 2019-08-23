@@ -37,8 +37,14 @@ def loginC(bcrypter):
         return jsonify({"msg": "Bad email or password"}), 401
 
     # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=email)
-    return jsonify(access_token=access_token), 200
+    # https://flask-jwt-extended.readthedocs.io/en/latest/blacklist_and_token_revoking.html#blacklist-and-token-revoking
+    ret = {
+        'access_token': create_access_token(identity=email),
+        'refresh_token': create_refresh_token(identity=email)
+    }
+    return jsonify(ret), 200
+    
+
 
 
 def protectedC():
