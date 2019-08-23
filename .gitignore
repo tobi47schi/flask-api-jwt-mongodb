@@ -1,3 +1,4 @@
 .vscode
 uploads
 logfile.log
+.env
