@@ -20,6 +20,8 @@ app_bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 logging.basicConfig(filename=app_settings.logfile ,level=logging.INFO)
 
+logging.basicConfig()
+
 logging.info('START APP')
 
 
