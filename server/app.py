@@ -4,17 +4,23 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from flask_bcrypt import Bcrypt
+import logging
+
 
 #eigene
 import control.usercontroller as usercontroller
 import control.filecontroller as filecontroller
+import app_settings
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.config['JWT_SECRET_KEY'] = app_settings.jwtSecret  # Change this!
 app.debug=True
 app_bcrypt = Bcrypt(app)
 # Setup the Flask-JWT-Extended extension
 jwt = JWTManager(app)
+logging.basicConfig(filename=app_settings.logfile ,level=logging.INFO)
+
+logging.info('START APP')
 
 
 # Provide a method to create access tokens. The create_access_token()
