@@ -5,20 +5,19 @@ from flask_jwt_extended import (
 )
 
 from bson.json_util import dumps, loads
-
 from mongoDB import db
 
 
-def signupC(bcrypter):
+def signup(app_bcrypt):
     user = request.json
-    pw_hash = bcrypter.generate_password_hash(user['password'])  ## from flask_bcrypt import Bcrypt
+    pw_hash = app_bcrypt.generate_password_hash(user['password'])  ## from flask_bcrypt import Bcrypt
     user['password'] = pw_hash.decode("utf-8")
     _id = db.users.insert(user)
     _id = str(_id)
     return jsonify({"_id": _id})
 
 
-def loginC(bcrypter):
+def login(app_bcrypt):
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
@@ -33,7 +32,7 @@ def loginC(bcrypter):
     if not found:
         return jsonify({"msg": "User not found"}), 400
 
-    if email != found['email'] or not bcrypter.check_password_hash(found['password'], password):
+    if email != found['email'] or not app_bcrypt.check_password_hash(found['password'], password):
         return jsonify({"msg": "Bad email or password"}), 401
 
     # Identity can be any data that is json serializable
@@ -41,11 +40,11 @@ def loginC(bcrypter):
     return jsonify(access_token=access_token), 200
 
 
-def protectedC():
+def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
-def getUsersC():
+def getUsers():
     mongoColl = db.users.find()
     return Response(dumps(mongoColl), mimetype="application/json")

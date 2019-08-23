@@ -6,13 +6,14 @@ from flask_jwt_extended import (
 from flask_bcrypt import Bcrypt
 
 #eigene
-from control.usercontroller import signupC, loginC, protectedC, getUsersC
+import control.usercontroller as usercontroller
+import control.filecontroller as filecontroller
 
 app = Flask(__name__)
-app.debug=True
-bcrypter = Bcrypt(app)
-# Setup the Flask-JWT-Extended extension
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.debug=True
+app_bcrypt = Bcrypt(app)
+# Setup the Flask-JWT-Extended extension
 jwt = JWTManager(app)
 
 
@@ -21,17 +22,17 @@ jwt = JWTManager(app)
 # it to the caller however you choose.
 @app.route('/login', methods=['POST'])
 def login():
-    return loginC(bcrypter)
+    return usercontroller.login(app_bcrypt)
 
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    return signupC(bcrypter)
+    return usercontroller.signup(app_bcrypt)
 
 
 @app.route('/users', methods=['GET'])
 def getUsers():
-    return getUsersC()
+    return usercontroller.getUsers()
 
 
 # Protect a view with jwt_required, which requires a valid access token
@@ -39,7 +40,13 @@ def getUsers():
 @app.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
-    return protectedC()
+    return usercontroller.protected()
+
+
+@jwt_required
+@app.route('/uploader', methods = ['POST'])
+def uploader():
+    return filecontroller.upload_file()
 
 
 if __name__ == '__main__':
